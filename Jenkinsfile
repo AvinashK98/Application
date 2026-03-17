@@ -1,4 +1,3 @@
-4qgrweadsvx
 pipeline {
 agent {
 label {

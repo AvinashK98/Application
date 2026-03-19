@@ -27,6 +27,7 @@ pipeline {
 
         stage('Docker image build') {
             steps {
+                sh 'chmod 666 /var/run/docker.sock'
                 sh 'docker build -t avinashk98/my_app:1.0 .'
             }
         }

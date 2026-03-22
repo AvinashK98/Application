@@ -2,6 +2,7 @@ pipeline{
 	agent{
 		node{
 			label "built-in"
+			customWorkspace "/app/deploy"
 		}
 	}
 	

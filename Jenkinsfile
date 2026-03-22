@@ -1,44 +1,46 @@
-pipeline {
-    agent {
-        node {
-            label 'slave-2'
-            customWorkspace '/mnt/build'
-        }
-    }
-
-    tools {
-        maven 'maven'
-        git 'git'
-    }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'master', url: 'https://github.com/AvinashK98/Application.git'
-            }
-        }
-
-
-        stage('maven-Build') {
-            steps {
-                sh 'mvn clean install'
-            }
-        }
-
-        stage('Docker image build') {
-            steps {
-                sh 'sudo chmod 666 /var/run/docker.sock'
-                sh 'docker build -t avinashk98/my_app:1.0 .'
-            }
-        }
-
-        stage('Image push to DockerHub') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'DockerID', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                    sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
-                    sh "docker push avinashk98/my_app:1.0"
-                }
-            }
-        }
-    }
+pipeline{
+	agent{
+		node{
+			label "built-in"
+			customWorkspace "/home/ec2-user/jenkins_workspace"
+		}
+	}
+	
+	stages{
+		stage("git checkout"){
+			steps{
+			git branch: 'main', credentialsId: 'AvinashK98', url: 'https://github.com/AvinashK98/Application.git'
+			}
+		}
+		
+		stage("Docker Image Build"){
+			steps{
+						sh "docker build -t avinashk98/webapp:v1 ."				
+			}
+		}
+		
+		stage("Docker Login"){
+			steps{
+				sh "docker login -u avinashk98 -p Docker@9087"
+			}
+		}
+		
+		stage("Pushing Image to Registry"){
+			steps{
+				sh "docker push avinashk98/webapp:v1"
+			}
+		}
+		
+		stage("Container Deployment"){
+			steps{
+					sh """
+						docker run -dp 90:8080 --name webapp --network mynet avinashk98/webapp:v1
+						docker run -dp 3306:3306 --name db -v vol:/var/lib/mysql --network mynet -e MYSQL_ROOT_PASSWORD=12345678 mysql:latest
+					
+					"""
+			}
+		}
+		
+		
+	}
 }

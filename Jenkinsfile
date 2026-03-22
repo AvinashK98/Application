@@ -2,13 +2,14 @@ pipeline{
 	agent{
 		node{
 			label "built-in"
-			customWorkspace "/app/deploy"
+			customWorkspace "/app"
 		}
 	}
 	
 	stages{
 		stage("git checkout"){
 			steps{
+				sh "chown jenkins:jenkins /app"
 			git branch: 'master', credentialsId: 'AvinashK98', url: 'https://github.com/AvinashK98/Application.git'
 			}
 		}

@@ -10,25 +10,12 @@ pipeline{
     }
 	
 	stages{
-		/*stage("git checkout"){
+		stage("git checkout"){
 			steps{
 			git branch: 'master', credentialsId: 'AvinashK98', url: 'https://github.com/AvinashK98/Application.git'
 			}
-		}*/
+		}
 		
-	stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv("${SONARQUBE}") {
-                    sh """
-                    mvn sonar:sonar \
-                    -Dsonar.projectKey=LoginWebApp\
-                    -Dsonar.projectName=LoginWebApp\
-                    -Dsonar.host.url=http://13.201.186.113:9000/\
-                    -Dsonar.login=sqp_6ce2d0a84ac5f38bf4de51366f4ba2361c627702
-                    """
-                }
-            }
-        }
 		
 		stage("Docker Image Build"){
 			steps{

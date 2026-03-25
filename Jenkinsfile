@@ -6,13 +6,13 @@ pipeline{
 	}
 	
 	stages{
-		/* stage("git checkout"){
+		stage("git checkout"){
 			steps{
 				sh "sudo chown jenkins:jenkins /app"
 			git branch: 'master', credentialsId: 'AvinashK98', url: 'https://github.com/AvinashK98/Application.git'
 			}
 		}
-		*/
+		
 		stage("Code-Scanner"){
 			steps{
 					sh """

@@ -4,6 +4,10 @@ pipeline{
 			label "built-in"
 		}
 	}
+
+	 environment {
+        SONARQUBE = 'sonarqube-server'
+    }
 	
 	stages{
 		/*stage("git checkout"){
@@ -12,12 +16,19 @@ pipeline{
 			}
 		}*/
 		
-		stage('SonarQube Analysis') {
-    def mvn = tool 'Default Maven';
-    withSonarQubeEnv() {
-      sh "${mvn}/bin/mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=LoginWebApp -Dsonar.projectName='LoginWebApp'"
-    }
-  }
+	stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv("${SONARQUBE}") {
+                    sh """
+                    mvn sonar:sonar \
+                    -Dsonar.projectKey=LoginWebApp\
+                    -Dsonar.projectName=LoginWebApp\
+                    -Dsonar.host.url=http://13.201.186.113:9000/\
+                    -Dsonar.login=sqp_6ce2d0a84ac5f38bf4de51366f4ba2361c627702
+                    """
+                }
+            }
+        }
 		
 		stage("Docker Image Build"){
 			steps{

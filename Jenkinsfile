@@ -12,18 +12,12 @@ pipeline{
 			}
 		}*/
 		
-		stage("Code-Scanner"){
-			steps{
-					sh """
-					mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-  						-Dsonar.projectKey=LoginWebApp \
- 					    -Dsonar.projectName='LoginWebApp' \
-  						-Dsonar.host.url=http://13.201.186.113:9000 \
-  						-Dsonar.token=sqp_6ce2d0a84ac5f38bf4de51366f4ba2361c627702
-					"""
-			}
-			
-		}
+		stage('SonarQube Analysis') {
+    def mvn = tool 'Default Maven';
+    withSonarQubeEnv() {
+      sh "${mvn}/bin/mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=LoginWebApp -Dsonar.projectName='LoginWebApp'"
+    }
+  }
 		
 		stage("Docker Image Build"){
 			steps{

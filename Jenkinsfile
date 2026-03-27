@@ -8,6 +8,7 @@ pipeline{
 		DOCKER_IMG="avinashk98/webapp:${BUILD_NUMBER}"
 		
 	}
+		stages{
 			
 		stage("Docker Image Build"){
 			steps{
@@ -52,6 +53,6 @@ pipeline{
 }
 		
 		
-		
+}		
 	}
 }

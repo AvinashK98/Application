@@ -55,11 +55,21 @@ pipeline{
 					docker compose up -d					
 					
 				"""	
-            }
-        }
-    }
-}
-		
-		
-}		
+			}
+		}
 	}
+
+   }
+		
+		
+}
+
+post {
+        always {
+            sh '''
+            echo "Cleaning up .env file..."
+            rm -f .env
+            '''
+        }
+    }		
+}

@@ -2,7 +2,7 @@ services:
   frontend:
     image: avinashk98/app:v1
     ports:
-      - '1500:8080'
+      - '${fport}:8080'
     volumes:
       - 'app_data:/app'
     networks:
@@ -13,14 +13,14 @@ services:
   backend:
     image: mysql:latest
     ports:
-      - '3306:3306'
+      - '${bport}:3306'
     volumes:
       - 'db_data:/var/lib/mysql'
     networks:
       - 'mybridge'
     environment:
-      - 'MYSQL_ROOT_PASSWORD=12345678'
-      - 'MYSQL_DATABASE=test'
+      - 'MYSQL_ROOT_PASSWORD=${dbpass}'
+      - 'MYSQL_DATABASE=${dbase}'
 
 volumes:
   app_data:

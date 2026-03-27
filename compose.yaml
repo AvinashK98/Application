@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: avinashk98/app:v1
+    image: ${DOCKER_IMG}
     ports:
       - '${fport}:8080'
     volumes:

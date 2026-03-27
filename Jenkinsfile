@@ -31,16 +31,26 @@ pipeline{
 				sh "docker push ${DOCKER_IMG}"
 			}
 		}
+
+		stage('Inject Secrets & Deploy') {
+    			steps {
+    		    // We only pull the file credential here
+        		withCredentials([file(credentialsId: 'compose-scr', variable: 'ENV_FILE')]) {
+            		script {
+                		// Create the .env file
+                		sh "cp ${ENV_FILE} .env"
+
+                		sh """
+					docker compose down || true
+					docker compose pull
+					docker compose up -d					
+					
+				"""	
+            }
+        }
+    }
+}
 		
-		stage("Container Deployment"){
-			steps{
-					sh """
-						docker compose down || true
-						docker compose pull
-						docker compose up -d					
-					"""
-			}
-		}
 		
 		
 	}

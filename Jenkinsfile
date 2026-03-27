@@ -1,46 +1,43 @@
 pipeline{
 	agent{
 		node{
-			label "dev"
+			label "built-in"
 		}
 	}
-
-	 environment {
-        SONARQUBE = 'sonarqube-server'
-    }
-	
-	stages{
-		stage("git checkout"){
-			steps{
-			git branch: 'master', credentialsId: 'AvinashK98', url: 'https://github.com/AvinashK98/Application.git'
-			}
-		}
+	environment{
+		DOCKER_IMG="avinashk98/webapp:${BUILD_NUMBER}"
 		
-		
+	}
+			
 		stage("Docker Image Build"){
 			steps{
-						sh "docker build -t avinashk98/webapp:v1 ."				
+						sh "docker build -t ${DOCKER_IMG} ."				
 			}
 		}
 		
 		stage("Docker Login"){
 			steps{
-				sh "docker login -u avinashk98 -p Docker@9087"
+				withCredentials([usernamePassword(credentialsId: 'docker-creds', 
+                                          passwordVariable: 'DOCKER_PASS', 
+                                          usernameVariable: 'DOCKER_USER')]) {
+            
+            // Use the variables to log in. Jenkins will mask the password with '****'
+            sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
 			}
 		}
 		
 		stage("Pushing Image to Registry"){
 			steps{
-				sh "docker push avinashk98/webapp:v1"
+				sh "docker push ${DOCKER_IMG}"
 			}
 		}
 		
 		stage("Container Deployment"){
 			steps{
 					sh """
-						docker run -dp 90:8080 --name webapp --network mynet avinashk98/webapp:v1
-						docker run -dp 3306:3306 --name db -v vol:/var/lib/mysql --network mynet -e MYSQL_ROOT_PASSWORD=12345678 mysql:latest
-					
+						docker compose down || true
+						docker compose pull
+						docker compose up -d					
 					"""
 			}
 		}

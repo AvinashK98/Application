@@ -38,11 +38,11 @@ pipeline{
 	steps{
 
 		withCredentials([file(credentialsId: 'compose-scr', variable: 'ENV_FILE')]) {
- 		   sh '''
+ 		   sh """
 			docker compose down || true
    			docker compose --env-file $ENV_FILE up -d
  		   
-	              '''
+	              """
 				}
 		         
 			}

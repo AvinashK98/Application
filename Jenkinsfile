@@ -34,33 +34,19 @@ pipeline{
 			}
 		}
 
-		stage('Inject Secrets & Deploy') {
-    			steps {
-    		    // We only pull the file credential here
-        		withCredentials([file(credentialsId: 'compose-scr', variable: 'ENV_FILE')]) {
-            		script {
-                		// Create the .env file
-                	
+	stage('deployment-envfile'){
+	steps{
 
-                		sh """
-					rm -f .env || true
-
-            // Copy securely without Groovy interpolation
-            				cp ${ENV_FILE} .env
-
-            // Restrict permissions (security best practice)
-            				chmod 600 .env
-					docker compose down || true
-					docker compose pull
-					docker compose up -d					
-					
-				"""	
+		withCredentials([file(credentialsId: 'compose-scr', variable: 'ENV_FILE')]) {
+ 		   sh '''
+			docker compose down || true
+   			docker compose --env-file $ENV_FILE up -d
+ 		   
+	              '''
+				}
+		         
 			}
-		}
 	}
-
-   }
-		
 		
 }
 

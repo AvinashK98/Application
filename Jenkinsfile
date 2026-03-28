@@ -45,10 +45,10 @@ pipeline{
                 		sh """
 					rm -f .env || true
 
-            # Copy securely without Groovy interpolation
+            // Copy securely without Groovy interpolation
             				cp ${ENV_FILE} .env
 
-            # Restrict permissions (security best practice)
+            // Restrict permissions (security best practice)
             				chmod 600 .env
 					docker compose down || true
 					docker compose pull

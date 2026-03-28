@@ -37,8 +37,9 @@ pipeline{
 	stage('deployment-envfile'){
 	steps{
 
-		withCredentials([file(credentialsId: 'compose-scr', variable: 'ENV_FILE')]) {
+		withCredentials([file(credentialsId: 'secrets', variable: 'ENV_FILE')]) {
  		   sh """
+		   echo "$ENV_FILE"
 			docker compose down || true
    			docker compose --env-file $ENV_FILE up -d
  		   
